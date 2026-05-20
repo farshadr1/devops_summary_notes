@@ -111,4 +111,4 @@ ss -plunt
 > note: : old command is `netstat`
 
 ## nmap - a network scanner
-Nmap is used to discover hosts and services on a network by sending packets and analyzing the responses.[nmap Doc](linux_network/nmap.md)
+Nmap is used to discover hosts and services on a network by sending packets and analyzing the responses. see [nmap Doc](./network%20scanners.md)
