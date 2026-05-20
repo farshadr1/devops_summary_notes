@@ -27,6 +27,25 @@ The maximum packet size on most versions of Linux is 65507 bytes, which creates 
         Firmware Date: Fri 2010-08-06
         Firmware Age: 15y 9month 1w 6d   
         ```
+- change hostname:
+    `hostnamectl set-hostname <newHostName>`
+
+## DNS
+Two main locations for DNS:
+
+```bash
+cd /etc/resolv.conf
+cd /etc/systemd/resolve.conf
+```
+
+```bash
+# for NetworkManager service use :
+nmcli connection modify enp1s0 ipv4.dns 1.1.1.1
+
+# another temporarily tool:
+sudo resolvectl dns eth0 8.8.8.8 1.1.1.1
+resolvectl status
+```
 
 ## trace route
 The `traceroute` or `tracepath` command is used to trace the path that packets take from your computer to a destination host across a network. It shows each hop (router) along the path and measures the time it takes to reach each hop.   
