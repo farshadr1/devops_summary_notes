@@ -20,7 +20,7 @@
 - Change MAC address:
     - `ip link set eth0 address 00:11:22:33:44:55`
 
-- system information about interfaces:
+- System information about interfaces:
     - `cd /sys/class/net/`
 
 - Show routing table:
@@ -29,11 +29,14 @@
 - Show routes for specific destination:
     - `ip route get 8.8.8.8`
 
-- remove gateway:
+- Remove gateway:
     - `ip r delete default`
 
-- add default gateway:
+- Add default gateway:
     - `ip r add default via 10.0.2.1`
 
 - Add route via specific interface
     - `ip route add 172.16.0.0/16 dev eth1`
+
+- Shows the current neighbour table in kernel
+    - `ip neigh` or `ip n`

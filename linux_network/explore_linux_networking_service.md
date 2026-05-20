@@ -97,7 +97,7 @@ network:
 ### Additional networkd-based Commands
 - Use the `networkctl status` command to see the status of networkd-based interfaces. Here's an example of the results of that command.
 
-```
+```bash
 root@ubuntu-server:~# networkctl status
            State: routable                         
          Address: 10.0.2.53 on enp1s0              
