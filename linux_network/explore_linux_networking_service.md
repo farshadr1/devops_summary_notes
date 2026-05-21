@@ -47,7 +47,7 @@ It is located at: /etc/networking/interfaces
 
 change effect after Down and up the network interface (`ifdown` and `ifup`)
 
-## Analyzing systemd-networkd in Ubuntu Server
+## systemd-networkd in Ubuntu Server
 The systemd-networkd service (or simply networkd) is used by Ubuntu server and in some other special situations.
 
 - Check the service first:

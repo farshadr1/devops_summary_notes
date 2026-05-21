@@ -42,10 +42,13 @@ cd /etc/systemd/resolve.conf
 # for NetworkManager service use :
 nmcli connection modify enp1s0 ipv4.dns 1.1.1.1
 
-# another temporarily tool:
-sudo resolvectl dns eth0 8.8.8.8 1.1.1.1
+# temporarily tool for networkd-systemd:
+resolvectl dns eth0 8.8.8.8 1.1.1.1
 resolvectl status
 ```
+
+### adding local resovle names:
+`vim /etc/hosts`
 
 ## trace route
 The `traceroute` or `tracepath` command is used to trace the path that packets take from your computer to a destination host across a network. It shows each hop (router) along the path and measures the time it takes to reach each hop.   
@@ -54,7 +57,7 @@ The `traceroute` or `tracepath` command is used to trace the path that packets t
 
 ```bash
 # Ubuntu/Debian
-sudo apt install traceroute
+apt install traceroute
 
 # Check if installed
 which traceroute
@@ -106,11 +109,12 @@ whois 203.0.113.1
 whois github.com -H -I
 ```
 
-## dig - DNS lookup utility
+## dig - nslookup utility
+use dig to troubleshoot DNS problems
 ```bash
-# querying the Domain Name
+# Querying the Domain Name
 dig example.com
-# reverse pickup
+# Reverse pickup
 dig -x <ip_address>
 ```
 
@@ -118,16 +122,59 @@ dig -x <ip_address>
 
 ## SS - socket statistics
 ```bash
-# all udp and tcp connections
+# All udp and tcp connections
 ss -aut
 
-# all udp and tcp connections with don't resolve service names
+# All udp and tcp connections with don't resolve service names
 ss -aunt
 
-## all liscening udp/tcp with pid
+## All liscening udp/tcp with pid
 ss -plunt
 ```
 > note: : old command is `netstat`
 
 ## nmap - a network scanner
 Nmap is used to discover hosts and services on a network by sending packets and analyzing the responses. see [nmap Doc](./network%20scanners.md)
+
+## nmcli - NetworkManager CLI tool
+**nmcli** is the NetworkManager command-line interface.This is a very commonly used command line tool for analyzing, modifying, and troubleshooting network connections.
+
+```bash
+# Display the network configurations with DNS server
+nmcli
+
+# History of all connections
+nmcli connection show
+nmcli con show
+nmcli c s
+``` 
+
+### Add an IP address with nmcli
+Example:
+
+In this example, we specify that the address to be added will be static, then we add the IP address 10.0.2.152/24, and then we add the gateway and DNS IP addresses. You can add multiple IPs if you needed to in this manner, just by comma separating them. 
+
+```bash
+nmcli connection modify "Wired connection 1" ipv4.method manual ipv4.address 10.0.2.152/24 ipv4.gateway 10.0.2.1 ipv4.dns 10.0.2.1
+
+# to take effect:
+nmcli connection down "Wired connection 1"
+nmcli connection up "Wired connection 1"
+```
+
+Example:
+
+By selecting "auto" we set the interface to obtain all TCP/IP information from a DHCP server (if one is available) including it's IP address, netmask, gateway address, and DNS server IP address.
+
+```bash
+nmcli c m "Wired connection 1" ipv4.method auto 
+```
+### other nmcli commands:
+```bash
+# Scan and connect Wifi interfaces
+nmcli dev wifi
+
+# Useful examples
+man nmcli-examples
+```
+
