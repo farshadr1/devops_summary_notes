@@ -134,7 +134,7 @@ ss -plunt
 > note: : old command is `netstat`
 
 ## nmap - a network scanner
-Nmap is used to discover hosts and services on a network by sending packets and analyzing the responses. see [nmap Doc](./network%20scanners.md)
+Nmap is used to discover hosts and services on a network by sending packets and analyzing the responses. see [nmap Doc](./network_scanners.md)
 
 ## nmcli - NetworkManager CLI tool
 **nmcli** is the NetworkManager command-line interface.This is a very commonly used command line tool for analyzing, modifying, and troubleshooting network connections.
