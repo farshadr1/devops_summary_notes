@@ -131,7 +131,7 @@ ss -aunt
 ## All liscening udp/tcp with pid
 ss -plunt
 ```
-> note: : old command is `netstat`
+> note: : old school command is `netstat`
 
 ## nmap - a network scanner
 Nmap is used to discover hosts and services on a network by sending packets and analyzing the responses. see [nmap Doc](./network_scanners.md)
@@ -178,3 +178,23 @@ nmcli dev wifi
 man nmcli-examples
 ```
 
+## other testing tools
+
+### speedtest-cli
+
+Test the download and upload speed.
+
+`sudo apt install speedtest-cli`
+
+### NetPerf
+
+Network performance tools can be used to measure the data throughput between one system and another.
+
+`sudo apt install NetPerf`
+> it is in non-free repo
+
+### btop
+
+Geraphical version of top include current up/down speed.
+
+`sudo apt install btop`

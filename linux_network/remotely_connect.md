@@ -43,3 +43,80 @@ ssh-copy-id user@10.0.2.51
 
 This way, we don't have to send a user's password over the network, and instead rely on the much more secure SSH key process.
 
+# SCP - Secure copy
+
+Example:
+
+```bash
+# scp <source> <destination>
+scp debian.iso user@10.0.2.51:/home/user
+```
+- scp options:
+
+```
+-C      	Compression enable
+-c cipher 	encript the data
+-p port		use port number
+-r			recursive
+```
+
+# rsync - better than scp
+
+It can be used for local copying and remotely. for remote, you have to installed on both systems.
+rsync reduces the amount of  data  sent  over the  network  by  sending only the differences between the source files and the existing files in the destination.
+
+Example:
+
+```bash
+# copy <source> <destination> whit archive 
+rsync -a debian.iso user@10.0.2.51:/home/user
+```
+
+in this example The files are transferred in archive mode, which ensures that symbolic links, evices, attributes, permissions, ownerships, etc are preserved in the transfer.
+
+- rsync options:
+
+```
+-v      		verbos
+-z		 		compress the data
+-u          	skip files that are newer on the receiver
+-P				progress
+-e "ssh -p 22"	port change
+```
+
+# SFTP
+the SSH File Transfer Protocol, also known as Secure File Transfer Protocol, is a network protocol that provides file access, file transfer, and file management on remote system.
+
+- Connect to server: `sftp user@10.0.2.52`
+- Select the public SSH file: `sftp -i <identify key file> <destination>`
+- Retrieving a file: `get <filename> `
+- Resume get: `reget <filename>`
+- Pushing files to the remote system `put <filename>`
+- list local system: `lls`
+
+ > Note: Many commands can be run locally while in an SFTP session. Just place an 'l' before the command. For example, `cd` becomes `lcd`, `mkdir` becomes `lmkdir`, and `pwd` becomes `lpwd`. 
+
+While in an SFTP session, press the ? key to access a basic help system and list of commands that you can run. 
+
+When finished you can exit the session by typing `bye` or `quit` or by pressing Ctrl + d.
+
+# curl
+
+**curl**  is a tool to transfer data from or to a server, using one of the supported protocols (DICT, FILE, FTP, FTPS, GOPHER, HTTP, HTTPS, IMAP, IMAPS,  LDAP,  LDAPS,  MQTT, POP3, POP3S, RTMP, RTMPS, RTSP, SCP, SFTP, SMB, SMBS, SMTP, SMTPS, TELNET and TFTP). The command  is  designed to work without user interaction.
+
+- for installing : `apt install curl`
+
+```bash
+# Save output to file
+curl -o <output_file> <file_url>
+
+# Multiple Download
+curl -O <file_url1> -O <file_url2>
+
+# Header request
+curl -I liara.ir/robots.txt
+
+# Access with redirect
+curl -L <file_url>
+```
+
