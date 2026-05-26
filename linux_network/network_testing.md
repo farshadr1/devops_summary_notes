@@ -38,9 +38,20 @@ cd /etc/resolv.conf
 cd /etc/systemd/resolve.conf
 ```
 
+Two DNS common services in linux:
+
+```bash
+# Modern Linux systems
+sudo systemctl status systemd-resolved.service 
+
+# Older linuxs:
+sudo systemctl status resolvconf
+```
+
 ```bash
 # for NetworkManager service use :
 nmcli connection modify enp1s0 ipv4.dns 1.1.1.1
+nmcli dev show
 
 # temporarily tool for networkd-systemd:
 resolvectl dns eth0 8.8.8.8 1.1.1.1
