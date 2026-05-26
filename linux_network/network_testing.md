@@ -174,6 +174,9 @@ nmcli c m "Wired connection 1" ipv4.method auto
 # Scan and connect Wifi interfaces
 nmcli dev wifi
 
+# Add a DNS server
+nmcli connection modify "Wired connection 1" +ipv4.dns "8.8.8.8 8.8.4.4"
+
 # Useful examples
 man nmcli-examples
 ```

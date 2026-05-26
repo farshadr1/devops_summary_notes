@@ -117,7 +117,7 @@ Mar 30 14:41:37 ubuntu-server systemd-networkd[682]: enp1s0: Gained IPv6LL
 Mar 30 14:41:37 ubuntu-server systemd[1]: Finished Wait for Network to be Configured.
 ```
 
-## Analyzing the NetworkManager Service
+## NetworkManager Service
 The NetworkManager service is probably the most commonly used networking service in Linux. It is the default on RHEL/Fedora/CentOS, and is used by default on Debian (as a client), Ubuntu Desktop, Mint, and many more Linux distributions. 
 
 - View the status of the service:
