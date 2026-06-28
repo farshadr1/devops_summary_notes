@@ -120,3 +120,14 @@ curl -I liara.ir/robots.txt
 curl -L <file_url>
 ```
 
+# sshuttle - ssh tunnel
+```bash
+# Route all traffic 
+sshuttle -r user@remote-server 0/0
+
+# Route specific subnets. accessing remote to internal network
+sshuttle -r user@remote-server 10.1.2.0/24
+
+# use ssh key
+sshuttle -r user@remote-server --ssh-cmd "ssh -i /path/to/keyfile" 0/0
+```
