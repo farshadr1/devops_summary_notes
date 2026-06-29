@@ -1,7 +1,6 @@
  # Nmap-Cheat-Sheet
 
 - Nmap Target Selection
-
 ```bash
 #Scan a single IP	               
 nmap 192.168.1.1
@@ -16,7 +15,6 @@ nmap -iL list-of-ips.txt
 ```
 
 - Nmap Port Selection
-
 ```bash
 #Scan a single Port	                    
 nmap -p 22 192.168.1.1
@@ -28,7 +26,6 @@ nmap -F 192.168.1.1
 nmap -p- 192.168.1.1
 ```
 - Nmap Port Scan types
-
 ```bash
 #Scan using TCP connect	                  
 nmap -sT 192.168.1.1
@@ -41,7 +38,6 @@ nmap -Pn -F 192.168.1.1
 ```
 
 - Service and OS Detection
-
 ```bash
 #Detect OS and Services	           
 nmap -A 192.168.1.1
@@ -54,7 +50,6 @@ nmap -sV --version-intensity 0 192.168.1.1
 ```
 
 - Nmap Output Formats
-
 ```bash
 #Save default output to file	       
 nmap -oN outputfile.txt 192.168.1.1
@@ -67,7 +62,6 @@ nmap -oA outputfile 192.168.1.1
 ```
 
 - Digging deeper with NSE Scripts
-
 ```bash
 #Scan using default safe scripts	   
 nmap -sV -sC 192.168.1.1
@@ -80,7 +74,6 @@ nmap -sV --script=smb* 192.168.1.1
 ```
 
 - A scan to search for DDOS reflection UDP services
-
 ```bash
 #Scan for UDP DDOS reflectors	    
 nmap –sU –A –PN –n –pU:19,53,123,161 –script=ntp-monlist,dns-recursion,snmp-sysdescr 192.168.1.0/24
@@ -88,7 +81,6 @@ nmap –sU –A –PN –n –pU:19,53,123,161 –script=ntp-monlist,dns-recursi
 
 
 - HTTP Service Information
-
 ```bash
 #Gather page titles from HTTP services	   
 nmap --script=http-title 192.168.1.0/24
@@ -99,27 +91,23 @@ nmap --script=http-enum 192.168.1.0/24
 ```
 
 - Detect Heartbleed SSL Vulnerability
-
 ```bash
 #Heartbleed Testing	      
 nmap -sV -p 443 --script=ssl-heartbleed 192.168.1.0/24
 ```
 
 - IP Address information
-
 ```bash
 #Find Information about IP address	
 nmap --script=asn-query,whois,ip-geolocation-maxmind 192.168.1.0/24
 ```
 
 - Scan port services from 1 to 65535
-
 ```bash
 nmap -sV -p 1-65535 192.168.1.1/24
 ```
 
 - All ports, all service versions, simple scripts = just the open
-
 ```bash
 nmap -p- -sV -sC $IP --open
 ```
