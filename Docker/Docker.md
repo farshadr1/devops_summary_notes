@@ -1,6 +1,6 @@
 # Docker Cheat Sheet
 
-## Installation
+## 🚢 Installation
 
 On Linux, install Docker Engine: https://docs.docker.com/engine/install/
 On Windows or macOS, install Docker Desktop: https://docs.docker.com/desktop/
@@ -23,7 +23,7 @@ docker stop \<container_name>               | Stop a running container
 docker start \<container_name>              | Start a stopped container
 docker rm \<container_name>                 | Remove a container
 
-## Executing commands in a container
+## 🔌 Executing commands in a container
 
 Command | Description
 --------|-------------
@@ -127,7 +127,7 @@ configs                              | A list of configs defined in the file
 secrets                              | A list of secrets defined in the file
 
 
-## Dockerfile package manager update/install
+## ⛩️ Dockerfile package manager update/install
 ```bash
 ## Ubuntu
 RUN apt-get update && apt-get install -y --no-install-recommends \
