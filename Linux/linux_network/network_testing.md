@@ -192,6 +192,18 @@ nmcli connection modify "Wired connection 1" +ipv4.dns "8.8.8.8 8.8.4.4"
 man nmcli-examples
 ```
 
+### change DNS:
+```bash
+nmcli connection modify "Wired connection 1" ipv4.ignore-auto-dns yes
+nmcli connection modify "Wired connection 1" ipv4.dns "1.1.1.1 1.0.0.1"
+nmcli connection down "Wired connection 1"
+nmcli connection up "Wired connection 1"
+
+# Verify
+resolvectl status
+```
+
+
 ## other testing tools
 
 ### speedtest-cli
