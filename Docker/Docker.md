@@ -34,10 +34,12 @@ docker exec -it \<container_name> bash    | Open an interactive shell in a runni
 
 Command | Description
 --------|-------------
-ocker build -t \<image> .       | Build and tag a new image from a Dockerfile
-docker images                   | List local images
-docker rmi \<image>             | Remove an image
-docker image prune              | Remove all unused images
+docker build -t \<image_name> .       | Build and tag a new image from a Dockerfile
+docker build -f \<file> .             | Build with Name of the Dockerfile 
+docker history \<image>               | Show the image layers
+docker images                         | List local images
+docker rmi \<image>                   | Remove an image
+docker image prune                    | Remove all unused images
 
 ## ☁️ Container registry commands
 
@@ -98,10 +100,10 @@ HEALTHCHECK \<command>              | Set a healthcheck command
 
 Key      | Description
 ---------|-------------
-name                                | Set the name of the project
+name                                 | Set the name of the project, not base directory
 services.\<name>.image               | Set the image to use or build
 services.\<name>.container_name      | Set the container name
-services.\<name>.hostname            | Set hostname for the container
+services.\<name>.hostname            | Set hostname for the container. Later, another container can ping with it
 services.\<name>.build               | Build context and options
 services.\<name>.build.context       | Build context (default is the current directory)
 services.\<name>.build.dockerfile    | Dockerfile to use (default is Dockerfile)
@@ -110,8 +112,13 @@ services.\<name>.build.args          | Build arguments
 services.\<name>.command             | Override the default command for the container
 services.\<name>.entrypoint          | Override the default entrypoint for the container
 services.\<name>.volumes             | Mount volumes in the container
+services.\<name>.volumes.type        | bind, 
+services.\<name>.volumes.source      | source path
+services.\<name>.volumes.target      | container path
+services.\<name>.volumes.read_only   | true, false
 services.\<name>.ports               | Publish container ports to the host
 services.\<name>.environment         | Set environment variables in the container
+services.\<name>.env_file            | Set environment file in the container
 services.\<name>.restart             | Restart policy (no/always/on-failure/unless-stopped)
 services.\<name>.scale               | Set the number of containers to run
 services.\<name>.networks            | List of networks to connect the container to
@@ -125,6 +132,40 @@ volumes.\<name>.name                 | Set the name of the volume
 volumes.\<name>.driver               | Set the volume driver
 configs                              | A list of configs defined in the file
 secrets                              | A list of secrets defined in the file
+
+## 🔄 Docker compose hot reload file
+When something changes, Docker automatically performs an action. no need to down, rebuild, up.
+Its useful for development application. Its excelent for script langages like Python, Nodejs, PHP, Frontend... not for compilation ones like Go.
+
+`docker compose up --watch`
+
+```YAML
+## compose.yaml:
+develop:
+  watch:
+    - action: sync
+      path: ./src
+      target: /app/src
+```
+
+## ✅ Docker compose health check
+```YAML
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+```
+| Option      |	Purpose  |
+|-------------|----------                                                 |
+| test        | Command executed to check service health                  |
+| interval    |	Time between successive health checks                     |
+| timeout	    | Maximum time to wait for a check to complete              |
+| retries	    | Failures required before marking the container unhealthy	|
+|start_period	| Ignoring period before counting failures                  |
+
+see this: https://last9.io/blog/docker-compose-health-checks/
 
 
 ## ⛩️ Dockerfile package manager update/install
