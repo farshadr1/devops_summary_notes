@@ -62,19 +62,6 @@ docker system prune             | Remove unused data
 docker system prune -a          | Remove all unused data
 docker info                     | Display system-wide information
 
-## 📝 Docker Compose
-
-Command | Description
---------|-------------
-docker compose up -d            | Create and start containers in docker-compose.yaml directory
-docker compose up --build       | Rebuild images before starting containers
-docker compose stop             | Stop services
-docker compose down             | Stop and remove containers and networks
-docker compose ps               | List running containers
-docker compose logs             | View the logs of all containers
-docker compose logs \<service>  | View the logs of a specific service
-docker compose logs -f          | View and follow the logs
-
 ## 🔧 Dockerfile instructions
 
 Instruction | Description
@@ -95,6 +82,20 @@ ARG \<name>                         | Define a build argument
 ARG \<name>=<default>               | Define a build argument with a default value
 LABEL \<key>=<value>                | Set a metadata label
 HEALTHCHECK \<command>              | Set a healthcheck command
+
+## 📝 Docker Compose
+
+Command | Description
+--------|-------------
+docker compose up -d                    | Create and start containers in docker-compose.yaml directory
+docker compose up --build               | Rebuild images before starting containers
+docker compose run /<service> [COMMAND] | Run a service in docker compose
+docker compose stop                     | Stop services
+docker compose down                     | Stop and remove containers and networks
+docker compose ps                       | List running containers
+docker compose logs                     | View the logs of all containers
+docker compose logs \<service>          | View the logs of a specific service
+docker compose logs -f                  | View and follow the logs
 
 ## 📌 Docker Compose file reference
 
