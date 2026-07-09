@@ -36,6 +36,7 @@ Command | Description
 --------|-------------
 docker build -t \<image_name> .       | Build and tag a new image from a Dockerfile
 docker build -f \<file> .             | Build with Name of the Dockerfile 
+docker build --target=\<stage> .      | for multistage files, build up to the target stage 
 docker history \<image>               | Show the image layers
 docker images                         | List local images
 docker rmi \<image>                   | Remove an image
@@ -101,19 +102,19 @@ docker compose logs -f                  | View and follow the logs
 
 Key      | Description
 ---------|-------------
-name                                 | Set the name of the project, not base directory
+project_name                         | Set the name of the project, not base directory
 services.\<name>.image               | Set the image to use or build
 services.\<name>.container_name      | Set the container name
 services.\<name>.hostname            | Set hostname for the container. Later, another container can ping with it
 services.\<name>.build               | Build context and options
 services.\<name>.build.context       | Build context (default is the current directory)
 services.\<name>.build.dockerfile    | Dockerfile to use (default is Dockerfile)
-services.\<name>.build.target        | Build stage to use
+services.\<name>.build.target        | Build stage to use(for multistage)
 services.\<name>.build.args          | Build arguments
 services.\<name>.command             | Override the default command for the container
 services.\<name>.entrypoint          | Override the default entrypoint for the container
 services.\<name>.volumes             | Mount volumes in the container
-services.\<name>.volumes.type        | bind, 
+services.\<name>.volumes.type        | 'bind', 'volume'
 services.\<name>.volumes.source      | source path
 services.\<name>.volumes.target      | container path
 services.\<name>.volumes.read_only   | true, false
@@ -126,13 +127,14 @@ services.\<name>.networks            | List of networks to connect the container
 services.\<name>.depends_on          | List of services to start before this service
 services.\<name>.labels              | Set metadata labels for the container
 networks                             | A list of networks defined in the file
-networks.\<name>.driver              | Set the network driver
-networks.\<name>.external            | Don't create the network, use an existing one
+networks.\<net_name>.driver          | Set the network driver
+networks.\<net_name>.external        | Don't create the network, use an existing one
 volumes                              | A list of volumes defined in the file
-volumes.\<name>.name                 | Set the name of the volume
-volumes.\<name>.driver               | Set the volume driver
+volumes.\<vol_name>.name             | Set the name of the volume
+volumes.\<vol_name>.driver           | Set the volume driver
 configs                              | A list of configs defined in the file
 secrets                              | A list of secrets defined in the file
+include.path                         | Include sub compose.yaml
 
 ## 🔄 Docker compose hot reload file
 When something changes, Docker automatically performs an action. no need to down, rebuild, up.
@@ -179,3 +181,22 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 ## Alpine
 RUN apk add --no-cache curl
 ```
+
+## 🗂️ multiple compose file
+
+```YAML
+# main-compose.yaml
+include:
+  - ./database/compose.yaml
+  - ./cache/redis.compose.yaml
+  - oci://docker.io/team/analytics:latest # You can even include from remote sources like git
+
+services:
+  webapp:
+    build: .
+    depends_on:
+      - database  # This service is defined in the included database/compose.yaml
+      - redis     # This service is defined in the included redis.compose.yaml
+```      
+
+ if an included file defines a service, network, or volume that has the same name as one in the main file, the merge will fail to prevent accidental overrides. You can intentionally override these settings by using a standard compose.override.yaml file. This file automatically merged after main compose.yaml and can override configurations from the included files.
