@@ -1,0 +1,217 @@
+# system
+
+## 💪 CAPACITY
+- `top` # top process, press 'f' field selection
+- `sar` # System Activity Reporter
+- `pstree` # Process in tree structure
+- `ps aux` # combine | grep
+- `atop` # top with record
+- `lsof` # "list open files", It displays the files and resources currently opened by processes.
+- `lsof -i :80` # to see what is listening on port 80
+- `free -h` # Memory usage
+- `vmstat` # Memory stat
+- `iotop` # Disk usage
+- `iftop` # Network usage
+- `lsblk` # List Hard devices and mounting state
+- `lsblk -f` # Show filesystem type and usage
+
+### SAR : System Activity Reporter
+`sudo apt install sysstat`
+
+After installation, you need to start and enable the service for it to begin collecting data automatically.
+
+`sudo systemctl enable --now sysstat`
+
+after you install the sysstat package, the Data Collection(sa1) and Daily Report(sa2) cronjob are set up to run automatically. binary logs are store in `/var/log/sysstat/`
+
+`sadf` (System Activity Data Formatter) : for change the output format.
+
+Key Configuration Variables in `/etc/sysstat/sysstat`
+
+- Limit Log Age: The HISTORY variable is your primary control. Setting a lower number will cause the system to delete older log files automatically, directly limiting the total space used .
+
+- Compress Old Logs: Setting COMPRESSAFTER to a number of days (e.g., 7) ensures files older than that are compressed, saving space while still keeping historical data accessible .
+
+- Disable Reports: The report files (sarDD) are essentially human-readable summaries of the binary data files. Setting REPORTS to false stops the generation of these slightly larger text files, saving some space 
+
+| Use Case              | Command Example   | Description
+|-----------------------|-------------------|------------
+| Basic CPU Report      | `sar or sar -u`   | Displays CPU usage for the current day. This is the default if no flag is specified.
+| Real-time Monitoring  | `sar -u 5 3`      |	Reports CPU usage every 5 seconds, 3 times.
+| Memory & Swap	        | `sar -r, sar -S, sar -W`	| Shows memory (-r), swap space (-S), and paging activity (-W) statistics.
+| Network Activity	    | `sar -n DEV 1`    | Reports network interface statistics like packets received and sent per second.
+| Disk I/O              | `sar -b or sar -d`| Shows I/O transfer rates (-b) and per-block device activity (-d).
+| Historical Report	    | `sar -f /var/log/sa/sa01` | Reads and reports data from a specific historical data file (for day 1 of the month).
+| Specify Time Range	| `sar -u -s 08:00:00 -e 14:00:00` | Reports CPU statistics for the current day between 8 AM and 2 PM.
+
+## 🫀 kernel
+
+- `dmesg` # Display kernel checks 
+- `lsmod` # List Hardware Deviece Modules
+- `modinfo <Device Module>` # Show info for a Module
+- `insmod` # Install Module
+- `rmmod` # Delete 
+- `modprobe` # newer tools for Show, Add, remove
+- `lsusb` # Show usb Devices
+- `lspci` # Show pci cards
+- `uname -v` == `cat /proc/sys/kernel/version` # Show distro version
+- `uname -a` # Show all data
+
+## 🫁 systemd
+first process runnig up with PID=1
+
+- `sysmctl` # show all services
+- `/lib/systemd/system` # systemd runtime files
+- `/etc/systemd/system` # systemd config files
+- `systemctl status/start/stop/enable/disable <service>` # Control the service
+- `systemctl enable --now <service>` # Enable + start immediately
+- `systemctl list-unit-files --type=service`  # All services & their status
+- `sudo systemctl daemon-reload` # Reload systemd
+
+## 👾 journalctl
+
+- `journalctl` # All logs
+- `journalctl -u sshd` # Logs for specific service
+- `journalctl --since "2026-01-01" --until "2026-01-02"` # Specific time range
+- `journalctl -p err` # Show only errors
+
+## 🔜 runlevel
+Runlevel is a mode or state in which a Linux system operates. Whenever a LINUX system boot, firstly the init process is started. Runlevels 2 and 4 are used for user-defined runlevels and runlevel 0 and 6 are used for halting and rebooting the system.
+
+- `who -r` == `runlevel` # current runleve. 5=>GUI, 2,3,4=>multi-user, 2=>rescue
+- `sudo systemctl set-default graphical.target` # In modern system use systemd to control runlevel
+
+# 📤 Boot
+
+## 📝 Initial Ram Disk
+The initramfs is a temporary filesystem image used to help the Linux Kernel
+mount the root filesystem and run the main Init system.
+
+You use it automatically on every single system boot. However, it becomes critically important in these specific scenarios:
+
+- When using encrypted disks (LUKS): You need a userspace tool (cryptsetup) to ask for your password and unlock the drive before the OS can boot. This tool lives in the initramfs.
+
+- When using Logical Volume Management (LVM) or RAID: The real root partition might be spread across multiple physical disks. The initramfs contains the tools to assemble these volumes before mounting them.
+
+- When booting from Network (iSCSI/PXE): The initramfs handles the network configuration and connects to the remote storage server before the OS loads.
+
+- When using exotic filesystems (like Btrfs or ZFS): The initramfs contains the userspace tools needed to mount these complex filesystems.
+
+- When you have a single, monolithic kernel: If you compile all your storage drivers directly into the kernel, you could boot without an initramfs. But it is so standard today that most distros always generate one.
+
+# 💿 Disk
+
+## 🩺 Check Disk health
+
+- `sudo lshw --class disk` # Information about disks
+
+```bash
+# Check disk health and predict failures
+sudo apt install smartmontools
+# Show drive info	
+smartctl -i /dev/sda
+# Run short test	
+smartctl -t short /dev/sda
+# See all SMART data and test results	
+smartctl -a /dev/sda
+```
+
+## 💡 Mount by fstab
+```bash
+# 1.Find the device uuid
+lsblk -f
+
+# 2.Create a new dir in /mnt
+sudo mkdir -p /mnt/mydrive
+
+# 3.Edit the /etc/fstab
+
+# 4. Add new line with this format:
+# [Device]  [Mount Point]  [FS type]  [Options]  [Dump=0]  [Pass]
+# Pass: 0=Skip checking ,1=Root filesystem(only one device), 2=Other filesystem
+# for example:
+UUID=1234-5678  /mnt/mydrive  ext4  defaults  0  2
+
+# 5.Test mount without rebooting
+sudo mount -a
+```
+
+Proper Way to Unmount
+```bash
+# 1. Unmount 
+sudo umount /mnt/mydrive
+# or
+sudo umount /dev/sdb1
+# 2. Remove or comment from fstab (if permanent)
+# 3. remove mountpoint
+sudo rm -rf /mnt/mydrive
+```
+
+## 🏮 Mount by systemd
+fstab way is simple, for more advanced features like a network mount use this method.
+```bash
+# 1. Create .mount unit file in /etc/systemd/system/
+# For example, to mount a device at /mnt/mydrive, the unit file would be /etc/systemd/system/mnt-mydrive.mount
+
+# 2. edit the file in this format:
+[Unit]
+Description=My Data Drive Mount Point
+
+[Mount]
+# Replace the device UUID
+What=/dev/disk/by-uuid/a80f8f10-75b6-45de-b63e-64b8b6a3a94b
+# This must match the unit file name
+Where=/mnt/mydrive
+# file system type, e.g., ext4, xfs, ntfs, nfs
+Type=ext4
+# Add your mount options here
+Options=defaults
+
+[Install]
+WantedBy=multi-user.target
+
+# 3. Reload systemd
+sudo systemctl daemon-reload
+
+# 4. Enable/start the mount
+sudo systemctl enable --now mnt-mydrive.mount 
+
+# Check the status of the systemd unit
+sudo systemctl status mnt-mydrive.mount
+```
+
+## 🔑 Disk Encrypt
+```bash
+# Erase a Disk for not recoverable it
+sudo shred -v --iterations=3 /dev/sde1
+
+# Crypt data tools
+sudo apt install cryptsetup-bin
+
+sudo apt install dislocker
+```
+
+## 	🎛️ TRIM SSD
+This allows the drive to:
+- Maintain Write Speed: It ensures the drive always has a pool of empty blocks ready for quick writing .
+- Reduce Wear: It prevents the drive from performing unnecessary cleanup operations, which can extend its lifespan
+
+```bash
+## Trim Manually
+sudo fstrim -v --all
+
+## auto Trim Service
+sudo systemctl status fstrim.timer
+```
+## 🔌 What is iSCSI?
+SCSI, SATA, and SAS are all physical interfaces used to connect storage devices (like hard drives and SSDs) to a computer's motherboard or storage controller.
+Today, SAS uses the SCSI protocol over a physical SAS cable.
+
+Most Speed : SAS
+
+iSCSI (Internet Small Computer System Interface) is the protocol that carries SCSI storage commands over a standard TCP/IP network (Ethernet). It is the most popular and affordable way to create a SAN(Storage Area Network).
+
+Performance and scalibility: 
+    DAS(Direct attached storage) → NAS(Network attached storage) → SAN
+
+`sudo apt install tgt` # iSCSI using tool    
