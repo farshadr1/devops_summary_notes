@@ -214,4 +214,58 @@ iSCSI (Internet Small Computer System Interface) is the protocol that carries SC
 Performance and scalibility: 
     DAS(Direct attached storage) → NAS(Network attached storage) → SAN
 
-`sudo apt install tgt` # iSCSI using tool    
+`sudo apt install tgt open-iscsi` # iSCSI using tool    
+
+## 🍇 LVM
+
+Create new lvm:
+```bash
+# 1.Create physical volume from 3 hard
+sudo pvcreate /dev/sda /dev/sdb /dev/sdc
+
+# Show pv disks
+sudo pvs
+
+# 2.Create volume groupe
+sudo vgcreate vg1 /dev/sda /dev/sdb /dev/sdc
+
+# Show vg disk
+sudo vgs
+
+# 3.Create logical volume
+sudo lvcreate -L 300G vg1 -n website
+
+# Show lv disk
+sudo lvs
+
+# 4.Format new lvm
+sudo mkfs.ext4 /dev/vg1/website
+
+# 5.Mount
+sudo mkdir -p /mnt/website
+sudo mount /dev/vg1/website /mnt/website
+
+# Show list
+lsblk -f
+
+# 6.Persist to fstab for reboot automount
+/dev/vg1/website /mnt/website ext4 defaults 0 0
+```
+
+Extend lvm:
+```bash
+# 1.Create physical volume
+sudo pvcreate /dev/sde /dev/sdf
+
+# 2.extend to exist volume groupe
+sudo vgextend vg1 /dev/sde /dev/sdf
+
+# 3.resize logical volume
+sudo lvresize -L +100G /dev/vg1/website
+
+# 4.resize filesystem to maximum space
+sudo resize2fs /dev/vg1/website
+```
+
+
+

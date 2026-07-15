@@ -41,7 +41,7 @@ cd /etc/systemd/resolve.conf
 Two DNS common services in linux:
 
 ```bash
-# Modern Linux systems
+# Network Manager systems
 sudo systemctl status systemd-resolved.service 
 
 # Older linuxs:
@@ -184,6 +184,11 @@ nmcli c m "Wired connection 1" ipv4.method auto
 ```bash
 # Scan and connect Wifi interfaces
 nmcli dev wifi
+
+# Add new wifi connection
+nmcli con add con-name Home-wifi ifname <Device name> type wifi ssid <Wifi SSID>
+nmcli con modify Home-wifi wifi-sec.psk <password>
+nmcli con up Home-wifi
 
 # Add a DNS server
 nmcli connection modify "Wired connection 1" +ipv4.dns "8.8.8.8 8.8.4.4"
