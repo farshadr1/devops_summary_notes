@@ -38,6 +38,54 @@ nmap --top-ports 1000 192.168.1.10
 nmap -oA scan_result 192.168.1.10
 ```
 
+# net cat (nc)
+
+## Command Line Options
+
+|option | Description 
+|-------|------------
+|-h	    | help screen
+|-u     | UDP mode
+|-l	    | listen for incoming connections, which makes it a server process.
+|-i seconds	 | The -i option defines the delay interval used by nc when sending lines or scanning ports.
+|-v     | verbose output.
+|-z	    | scan-only mode (no data transfer)
+|-r	    | The -r option tells nc to use random local and remote ports, which might be good for testing.
+|-o file	| The -o option tells nc to save the hex dump of network traffic to file, which might be handy for debugging.
+|-n	    | The -n option tells nc to use IP addresses (numeric) only.
+|-p port    | The -p option tells nc which port number to use.
+|-b	    | The -b option tells nc to allow UDP broadcasts.
+|-C	    | The -C option tells nc to send CRLF as line-ending.
+|-T type    | The -T option allows nc to set the type of the TOS (Type Of Service) flag.
+|-g gateway	| The -g option allows you to specify the route that the packets will take through the network. You can learn more about Source Routing here.
+|-s address	| The -s option allows you to specify the local source address that will be used in the nc command.
+|-t	    | The -t option is used for enabling telnet negotiation.
+|-w timeout | timout in second
+
+## usage
+```bash
+# Connect to server/localhost with 22 port
+nc -v localhost 22
+
+# udp connect
+nc –v –u 8.8.8.8 53
+
+# Port scanning
+netcat -z -v domain.com 1-1000
+
+# Check multiple ports
+nc -zv google.com 80 443 8080
+```
+
+```bash
+# Send a test packet and see what happens
+echo "TEST" | nc -v -w 2 8.8.8.8 53
+
+# If you get "Connection refused" → Firewall is explicitly rejecting
+# If you get "Timeout" → Firewall is silently dropping (stealth mode)
+# If you get "Connected" → Port is open and reachable
+```
+
 # Network Protocols & Standard Services
 Protocol	| Port	                    | Notes
 ------------|---------------------------|------

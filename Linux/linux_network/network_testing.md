@@ -208,7 +208,6 @@ nmcli connection up "Wired connection 1"
 resolvectl status
 ```
 
-
 ## other testing tools
 
 ### speedtest-cli
