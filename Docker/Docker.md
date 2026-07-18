@@ -84,6 +84,11 @@ ARG \<name>=<default>               | Define a build argument with a default val
 LABEL \<key>=<value>                | Set a metadata label
 HEALTHCHECK \<command>              | Set a healthcheck command
 
+### diffrence between `$` and `$$` in RUN/CMD:
+when there is environment variables.
+`$VAR` → Compose tries to substitute it before starting the container.
+`$$VAR` → Compose passes $VAR into the container unchanged. Inside the container, the shell expands $VAR.
+
 ## 📝 Docker Compose
 
 Command | Description
@@ -169,7 +174,6 @@ develop:
 |start_period	| Ignoring period before counting failures                  |
 
 see this: https://last9.io/blog/docker-compose-health-checks/
-
 
 ## ⛩️ Dockerfile package manager update/install
 ```bash
