@@ -84,11 +84,6 @@ ARG \<name>=<default>               | Define a build argument with a default val
 LABEL \<key>=<value>                | Set a metadata label
 HEALTHCHECK \<command>              | Set a healthcheck command
 
-### diffrence between `$` and `$$` in RUN/CMD:
-when there is environment variables.
-`$VAR` → Compose tries to substitute it before starting the container.
-`$$VAR` → Compose passes $VAR into the container unchanged. Inside the container, the shell expands $VAR.
-
 ## 📝 Docker Compose
 
 Command | Description
@@ -103,7 +98,7 @@ docker compose logs                     | View the logs of all containers
 docker compose logs \<service>          | View the logs of a specific service
 docker compose logs -f                  | View and follow the logs
 
-## 📌 Docker Compose file reference
+### 📌 Docker Compose file reference
 
 Key      | Description
 ---------|-------------
@@ -141,7 +136,15 @@ configs                              | A list of configs defined in the file
 secrets                              | A list of secrets defined in the file
 include.path                         | Include sub compose.yaml
 
-## 🔄 Docker compose hot reload file
+### diffrence between `$` and `$$` in compose.yam and Dockerfile.yaml:
+when there is environment variables.
+| Context         | `$VAR`| `$$VAR`|
+| --------------- | ----- | ------ |
+| **Compose YAML**| Compose substitutes the variable | Escapes `$` so the container receives `$VAR` |
+| **Dockerfile (`RUN`)** | Expanded by the shell (or Docker for some instructions) | `$$` is the shell's PID, **not** an escape for `$` |
+
+
+### 🔄 Docker compose hot reload file
 When something changes, Docker automatically performs an action. no need to down, rebuild, up.
 Its useful for development application. Its excelent for script langages like Python, Nodejs, PHP, Frontend... not for compilation ones like Go.
 
@@ -156,7 +159,7 @@ develop:
       target: /app/src
 ```
 
-## ✅ Docker compose health check
+### ✅ Docker compose health check
 ```YAML
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost"]
