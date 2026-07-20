@@ -125,6 +125,10 @@ use dig to troubleshoot DNS problems
 ```bash
 # Querying the Domain Name
 dig example.com
+
+# Querying the Domain Name with 8.8.8.8 dns
+dig @8.8.8.8 example.com
+
 # Reverse pickup
 dig -x <ip_address>
 ```
