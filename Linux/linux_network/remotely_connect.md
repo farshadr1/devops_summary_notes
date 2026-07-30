@@ -45,13 +45,8 @@ in server system:
 	1. `sudo vim /etc/ssh/sshd_config.d/hardened.conf`
 	2. Set `PasswordAuthentication no`
 
-Normally OpenSSH creates SSH host keys. Depending on the Linux distribution, they are generated:
-
-- during package installation
-- during the first boot
-- when sshd is started and no host keys exist
-
-If we dont confidence vendor, generate ourself.
+Normally OpenSSH creates SSH host keys. Depending on the Linux distribution, they are generated during package installation.
+but if we dont confidence vendor, generate ourselves.
 1. Delete pre-existing keys
 	- `sudo rm /etc/ssh/ssh_host*`
 2. Generate every missing host key
