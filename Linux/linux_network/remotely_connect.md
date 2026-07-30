@@ -24,24 +24,54 @@
 
 ## Create an RSA-based key pair
 
-in client system:
-```bash
-ssh-keygen
-```
-
-It's also highly recommended to select and confirm a complex passphrase to protect the keypair. The public and private key store in home/user/.ssh/ directory. You can see three files inside of .ssh: id_rsa (which is the private key), id_rsa.pub (which is the public key to be copied to remote hosts), and known_hosts, which contains the list of known hosts that you have connected to in the past. 
-
-> Tip: You can make bigger keys if your organization requires it. Let's say you needed 4096-bit. You could type the following:
-
-	`ssh-keygen -b 4096`
-
-Remember to use different names/directories when creating subsequent keys. 
-
-```bash
-ssh-copy-id user@10.0.2.51
-```
-
 This way, we don't have to send a user's password over the network, and instead rely on the much more secure SSH key process.
+
+in client system:
+
+* Configuring User Keys
+	1. Generate a key on your client
+		+ `ssh-keygen`
+			> Dont use sudo, becuse it use for user login not root login.
+		+ Keys are output to `~/.ssh`
+		+ `id_rsa` is the private key
+			> bigger keys for more security `ssh-keygen -b 4096`
+		+ `id_rsa.pub` is the public key
+		+ `id_rsa` is the private key
+	2. Copy your public key from the client to the server
+		+ `ssh-copy-id <username>@<server_name>`
+
+in server system:
+* Disable password authentication on the server
+	1. `sudo vim /etc/ssh/sshd_config.d/hardened.conf`
+	2. Set `PasswordAuthentication no`
+
+Normally OpenSSH creates SSH host keys. Depending on the Linux distribution, they are generated:
+
+- during package installation
+- during the first boot
+- when sshd is started and no host keys exist
+
+If we dont confidence vendor, generate ourself.
+1. Delete pre-existing keys
+	- `sudo rm /etc/ssh/ssh_host*`
+2. Generate every missing host key
+	- `sudo ssh-keygen -A`
+
+## Restricting Access to SSH 
+* Limiting user access to SSH
+	+ Modify the SSH config file in server
+		- `sudo vim /etc/ssh/sshd_config.d/hardened.conf`
+			```
+			AllowUsers user1 user2 user3
+			AllowGroups group1
+			PermitRootLogin no
+			```
+* Limiting in ufw
+	+ Limit by try
+		- `sudo ufw limit ssh/tcp`
+	+ Limit by any subnet
+		- `sudo ufw allow from 10.222.0.0/24 proto tcp to any port 22` 
+
 
 # SCP - Secure copy
 
