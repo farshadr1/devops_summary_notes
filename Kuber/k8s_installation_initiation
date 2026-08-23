@@ -163,13 +163,17 @@ $HOME/.kube/config
 # Configure kubectl for root:
 export KUBECONFIG=/etc/kubernetes/admin.conf
 
-# Install a CNI(Container Network Interface) plugin:
-# - Flannel
+# Install a CNI(Container Network Interface) plugin on master:
+# other name : pod network
+# - Flannel (low overhead)
 # - Calico (recommended)
 # - Cilium
 
 # Worker Nodes:
 # sudo kubeadm join <master-ip> --token <token> --discovery...
+
+# Delete exist token after all joins (auto delete after 24h)
+sudo kubeadm token delete <token>
 
 ```
 
