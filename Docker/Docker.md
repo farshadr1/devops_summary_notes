@@ -76,12 +76,13 @@ ENV \<key>=\<value>                 | Set an environment variable
 EXPOSE \<port>                      | Expose a port
 COPY \<src> \<dest>                 | Copy files from source to destination
 COPY --from=\<name> \<src> \<dest>  | Copy files from a build stage to destination
+ADD \<src> \<dest>                  | Like Copy but can fetch from url and can auto decompress(.tar, .tgz,...)
 WORKDIR \<path>                     | Set the working directory
 VOLUME \<path>                      | Create a mount point
 USER \<user>                        | Set the user
 ARG \<name>                         | Define a build argument
-ARG \<name>=<default>               | Define a build argument with a default value
-LABEL \<key>=<value>                | Set a metadata label
+ARG \<name>=\<default>               | Define a build argument with a default value
+LABEL \<key>=\<value>                | Set a metadata label
 HEALTHCHECK \<command>              | Set a healthcheck command
 
 ## 📝 Docker Compose
