@@ -46,13 +46,21 @@ docker image prune                    | Remove all unused images
 
 Command | Description
 --------|-------------
-docker login                    | Login to Docker Hub
-docker login \<server>          | Login to another container registry
-docker logout                   | Logout of Docker Hub
-docker logout \<server>         | Logout of another container registry
-docker push \<image>            | Upload an image to a registry
-docker pull \<image>            | Download an image from a registry
-docker search \<image>          | Search Docker Hub for images
+docker login -u \<user-name>                                        | Login to Docker Hub
+docker login \<server>                                              | Login to another container registry
+docker logout                                                       | Logout of Docker Hub
+docker logout \<server>                                             | Logout of another container registry
+docker push \<image>                                                | Upload an image to a registry
+docker pull \<image>                                                | Download an image from a registry
+docker search \<image>                                              | Search Docker Hub for images
+docker tag \<source_image>[:tag] \<target_image>[:tag]              | Add new name or alias
+docker tag \<source_image>[:tag] registry/username/repository[:tag] | Tag registry
+
+> Docker Image Naming Convention:
+[registry/][username/]repository[:tag]   
+  >> "[]" are optional  
+  default registry is docker.io
+
 
 ## 🛠️ System commands
 
@@ -84,6 +92,36 @@ ARG \<name>                         | Define a build argument
 ARG \<name>=\<default>               | Define a build argument with a default value
 LABEL \<key>=\<value>                | Set a metadata label
 HEALTHCHECK \<command>              | Set a healthcheck command
+
+## Docker Network Modes
+
+Driver | Description
+--------|------------
+bridge  |	The default network driver.
+host	  | Remove network isolation between the container and the Docker host.
+none	  | Completely isolate a container from the host and other containers.
+overlay	| Swarm Overlay networks connect multiple Docker daemons together.
+ipvlan	| Connect containers to external VLANs.
+macvlan	| Containers appear as devices on the host's network.
+
+| Driver      | When to use|
+| ----------- | ---------- |
+| **bridge**  | **Default choice** for containers running on the **same Docker host**. Containers communicate with each other through a virtual network. Good for most Docker Compose applications.                                            |
+| **host**    | Use when the container should **share the host's network stack** directly. No separate container IP/port mapping. Useful when maximum network performance or direct access to host interfaces is important.                    |
+| **overlay** | Use for **communication between containers on multiple Docker hosts**, typically with **Docker Swarm**. Creates a virtual network spanning multiple machines.                                                                  |
+| **ipvlan**  | Use when containers need to appear directly on the **physical network** with their own IP addresses, while sharing the host's network interface. Useful when you need efficient L2/L3 networking and many container endpoints. |
+| **macvlan** | Use when containers need their **own MAC addresses** and should appear as physical devices on the LAN. Useful for legacy applications or network appliances that require direct Layer-2 presence.                              |
+
+| Command      | Description|
+| ----------- | ---------- |
+| docker network ls                                         | List of networks      |
+| docker network create                                     | Create new network    | 
+| docker network inspect \<network_name>                    | inspect the network   |
+| docker network connect \<network_name> \<container_name>  | inspect the network   |
+
+> use `sudo iptables -t nat -L -n` to show NAT config in port mapped containers   
+> use for example `docker run -d --network host ubuntu` for connect to host network 
+
 
 ## 📝 Docker Compose
 
