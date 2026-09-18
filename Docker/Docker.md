@@ -86,11 +86,11 @@ COPY \<src> \<dest>                 | Copy files from source to destination
 COPY --from=\<name> \<src> \<dest>  | Copy files from a build stage to destination
 ADD \<src> \<dest>                  | Like Copy but can fetch from url and can auto decompress(.tar, .tgz,...)
 WORKDIR \<path>                     | Set the working directory
-VOLUME \<path>                      | Create a mount point
+VOLUME \<container_path>            | Create a mount point, in build give a randome name to docker volume
 USER \<user>                        | Set the user
 ARG \<name>                         | Define a build argument
-ARG \<name>=\<default>               | Define a build argument with a default value
-LABEL \<key>=\<value>                | Set a metadata label
+ARG \<name>=\<default>              | Define a build argument with a default value
+LABEL \<key>=\<value>               | Set a metadata label
 HEALTHCHECK \<command>              | Set a healthcheck command
 
 ## Docker Network Modes
@@ -122,6 +122,55 @@ macvlan	| Containers appear as devices on the host's network.
 > use `sudo iptables -t nat -L -n` to show NAT config in port mapped containers   
 > use for example `docker run -d --network host ubuntu` for connect to host network 
 
+## Docker Volumes
+
+### commands
+| Command      | Description|
+| ----------- | ---------- |
+| docker volume create /<volume_name>     | Create new volume     |
+| docker volume ls                        | Show list of volumes  |
+| docker volume inspect /<volume_name>    | Inspect the volume    |
+| docker volume rm /<volume_name>         | Delete the volume     |
+
+- docker volumes path: /var/lib/docker/volume/<volume_name>/_data
+
+### Practical rule:  
+| Requirement                                   | Recommended                                  |
+| --------------------------------------------- | -------------------------------------------- |
+| Database persistent data                      | **Named volume**                             |
+| Application-generated persistent data         | **Named volume**                             |
+| Configuration from host                       | **Bind mount, `:ro`**                        |
+| Source code during development                | **Bind mount**                               |
+| Logs that must be directly accessible on host | **Bind mount**                               |
+| Temporary data                                | **tmpfs**                                    |
+| Production application data                   | Usually **named volume** or external storage |
+
+### The bind mount issue:
+
+> A bind mount hides the entire target directory that was created in the image.   
+
+For example, suppose your Dockerfile has:
+```dockerfile
+RUN mkdir -p /app/config
+COPY config/default.yaml /app/config/
+```
+
+and then you run:
+```yaml
+volumes:
+  - ./config:/app/config
+```
+Docker does not merge the directories. The result inside the running container is contents of ./config
+
+Best Practice:
+- Mount only a specific file not entire directory
+- Use a separate directory in path of the data
+- Use Named volume
+- always check the image content
+
+**Named volume behavior:**
+- if the volume is empty, docker copies the content of image to the volume.
+- if the volume has content, the volume content replace(overwtites) with the image content.
 
 ## 📝 Docker Compose
 
