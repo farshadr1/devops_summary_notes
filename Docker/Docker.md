@@ -110,6 +110,36 @@ docker run hello-world
 | `LABEL <key>=<value>` | Set metadata labels |
 | `HEALTHCHECK <command>` | Define a health check command |
 
+### MultiStage best practice
+When to use multi-stage builds
+
+- Compiled languages (Go, Rust, C/C++, Java) — you need a compiler/SDK to build, but not to run the binary
+- Frontend apps (React, Vue, Angular) — you need Node + build tools to bundle, but the output is just static files served by nginx
+- Any language with a build step — TypeScript, Sass, etc.
+- Reducing attack surface — fewer packages in the final image means fewer CVEs
+- Separating test stages — run tests in an intermediate stage without shipping test dependencies
+
+**Best practices:**
+
+1. Use minimal final-stage base images
+    - distroless, alpine, or scratch (for static binaries) instead of full OS images
+    - scratch works great for Go/Rust static binaries — literally zero extra surface
+2. Order the Docker instructions from the least to most likely to change
+3. Run as non-root in the final stage
+    ```Dockerfile
+    RUN adduser -D appuser
+    USER appuser
+    ````
+4. Avoid latest image versions
+5. Combine RUN commands to minimize layers within a stage
+    ```bash
+    RUN apt-get update && apt-get install -y --no-install-recommends \
+    package1 package2 \
+    && rm -rf /var/lib/apt/lists/*
+    ```
+6. Use .dockerignore
+    - Keep node_modules, .git, build tools, etc. out of the build context — speeds up builds and avoids accidental copies.
+7. use Dockerfile stages for build-time variation (what's in the image), and docker-compose for run-time variation (how the container behaves — ports, volumes, env, bind mounte source code).
 ---
 
 ## 🌐 Docker network modes
