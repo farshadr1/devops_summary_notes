@@ -5,9 +5,11 @@ https://k8s-examples.container-solutions.com/examples/Pod/Pod.html
 https://k8syaml.com/
 
 
-## imperative commands fot Pods
+## imperative commands for Pods
 
 ```bash
+# See nodes in cluster
+kubectl get nodes -o wide 
 # run a pod
 kubectl run nginx --image=nginx:1.27.1
 
@@ -28,6 +30,32 @@ kubectl logs nginx
 
 # Delete the pod
 kubectl delete pod nginx
+
+# execute costume command from container
+kubectl exec -it pod-name -- sh
+```
+### Declarative run Pods
+example:
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp
+  labels:
+    name: myapp
+spec:
+  containers:
+  - name: myapp
+    image: <Image>
+    args:
+      - 'arg1'
+      - 'arg2'
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "500m"
+    ports:
+      - containerPort: <Port>
 ```
 
 ## Generating Kubernetes Manifests with kubectl
@@ -128,16 +156,32 @@ spec:
       labels:
 ```      
 
+example:ClusterIP
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-nodeport
-  selector:
+  name: api-clusterip
+  labels:
+    app: api-backend
+spec:
+  type: ClusterIP
+  selector: 
     app: api-backend
   ports:
-    - protocol: TCP
-      port: 80
+    - port: 80
+      targetPort: 80
+```
+
+example:Nodeport
+```yaml
+...
+spec:
+  type: NodePort
+  selector: 
+    app: api-backend
+  ports:
+    - port: 80
       targetPort: 80
       nodePort: 30007
 ```
@@ -147,7 +191,7 @@ metadata:
 | Service Type | Behavior | When to use |
 | ------------ | -------- | ----------- |
 | ClusterIP |- Exposes the service on an **internal**, stable cluster IP.<br>- It is only accessible within the cluster. |- Best for internal communication between microservices within the cluster.<br>- Often combined with ingresses to expose applications via HTTP and HTTPS.|
-| NodePort |- Exposes the service on each Node's IP at a **static port**.<br>- If not specified, picks a port from the range 30000-32767.<br>- Accessible from outside the cluster using \<NodeIP>:\<NodePort>. |- Useful for exposing a service externally **without a load balancer**.<br>- Often for development or testing. |
+| NodePort |- Exposes the service on each Node's IP at a **static port**.<br>- If not specified, picks a port from the range 30000-32767.<br>- Accessible from outside the cluster using \<NodeIP>:\<NodePort>. |- Useful for exposing a service externally **without a load balancer**.<br>- Often for **development or testing**. |
 | LoadBalancer |- Exposes the service externally using a **cloud** provider's load balancer.<br>- Provides a single external IP to reach the service. |- Ideal for production environments where external access with load balancing is required. |
 | ExternalName |- Maps the service to an external DNS name, **redirecting traffic** to a service outside the cluster. |- Used to allow services within the cluster to access external services via a DNS name. |
 
