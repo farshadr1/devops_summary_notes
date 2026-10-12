@@ -1,5 +1,5 @@
 
-## Usefull link for kuber yaml configs
+## Useful link for kuber yaml configs
 
 https://k8s-examples.container-solutions.com/examples/Pod/Pod.html
 https://k8syaml.com/
@@ -173,7 +173,10 @@ spec:
       targetPort: 80
 ```
 
+- When delete and recreate a Deployment, the Pod IP addresses change. When delete and recreate the Service itself, the ClusterIP address changes. The most robust way for connect is using Service's name.
+
 example:Nodeport
+access to node.
 ```yaml
 ...
 spec:
@@ -194,7 +197,6 @@ spec:
 | NodePort |- Exposes the service on each Node's IP at a **static port**.<br>- If not specified, picks a port from the range 30000-32767.<br>- Accessible from outside the cluster using \<NodeIP>:\<NodePort>. |- Useful for exposing a service externally **without a load balancer**.<br>- Often for **development or testing**. |
 | LoadBalancer |- Exposes the service externally using a **cloud** provider's load balancer.<br>- Provides a single external IP to reach the service. |- Ideal for production environments where external access with load balancing is required. |
 | ExternalName |- Maps the service to an external DNS name, **redirecting traffic** to a service outside the cluster. |- Used to allow services within the cluster to access external services via a DNS name. |
-
 
 ## Pods Fail Status
 
