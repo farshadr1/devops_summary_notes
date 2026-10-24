@@ -30,6 +30,7 @@ kubectl logs nginx
 
 # Delete the pod
 kubectl delete pod nginx
+kubectl delete --force pod nginx
 
 # execute costume command from container
 kubectl exec -it pod-name -- sh
@@ -114,10 +115,18 @@ spec:
 - The Deployment creates a ReplicaSet that creates three replicated Pods, indicated by the `.spec.replicas` field.
 - The `.spec.selector` field select a label that is defined in the Pod template. (app: nginx)
 
-use `kubectl apply -f nginx-deployment.yaml` to apply new Deployment.
-
 **commands**
 ```bash
+# apply new Deployment
+kubectl apply -f nginx-deployment.yaml
+
+# apply multiple resources
+kubectl apply -f nginx-deployment-directory
+
+# delete resources
+kubectl delete -f nginx-deployment-directory
+kubectl delete --force -f nginx-deployment-directory
+
 # check if the Deployment was created
 kubectl get deployments
 
