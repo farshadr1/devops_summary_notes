@@ -239,9 +239,62 @@ spec:
 |**readinessProbe**|	Can this container accept user traffic right now?|	Removes Pod from Service endpoints (no traffic).|	Temporary downtime (e.g., loaded buffers, database reconnects).|
 |**livenessProbe**|	Is the container stuck, deadlocked, or broken?|	Kills and restarts the container.|	Catching deadlocks, fatal crashes, or infinite loops.|
 
+example:
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+      - name: application
+        image: nginx:alpine
+        ports:
+        - containerPort: 8080
+
+        # 1. STARTUP PROBE: Gives the app up to 2 minutes to start up
+        startupProbe:
+          httpGet:
+            path: /healths/startup
+            port: 8080
+          periodSeconds: 10      # Check every 10s
+          failureThreshold: 12   # Allow 12 failures (10s * 12 = 120s budget)
+
+        # 2. LIVENESS PROBE: Only evaluates after startupProbe passes
+        livenessProbe:
+          httpGet:
+            path: /healths/live
+            port: 8080
+          periodSeconds: 15      # Check every 15s
+          timeoutSeconds: 2      # Must respond within 2s
+          failureThreshold: 3    # Restart after 3 consecutive failures
+
+        # 3. READINESS PROBE: Only evaluates after startupProbe passes
+        readinessProbe:
+          httpGet:
+            path: /healths/ready
+            port: 8080
+          periodSeconds: 5       # Aggressive checking for traffic routing
+          timeoutSeconds: 2      # Must respond within 2s
+          failureThreshold: 2    # Remove from Service endpoints quickly if broken
+          successThreshold: 1    # Put back in rotation after 1 success
+```
 
 ## Pods Fail Status
 
-- **ImagePullBackOff**: Image is not accessible.
+Fault Message | issue 
+------------- | ----
+**ImagePullBackOff**: | Image is not accessible.
+**OOMKilled**: | Out Of Memory, Image Killed because resources Limit
+**CrashLoopBackOff** : | multiple Crashed and currently waiting to restart again
 
 ##
