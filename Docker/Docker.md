@@ -68,12 +68,14 @@ docker run hello-world
 | `docker tag <source_image>[:tag] <target_image>[:tag]` | Add a new name or alias |
 | `docker tag <source_image>[:tag] registry/username/repository[:tag]` | Tag for a registry |
 
-> Docker image naming convention:
->
-> `[registry/][username/]repository[:tag]`
->
+> Docker image naming convention:  
+> `[registry/][username/]repository[:tag]`  
 > `[]` indicates optional parts.
 > The default registry is `docker.io`.
+
+Standard method used in pipeline:
+  1. Build image with tag
+  2. `docker push username/image_name:tag `
 
 ---
 

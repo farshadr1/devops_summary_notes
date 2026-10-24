@@ -33,6 +33,9 @@ kubectl delete pod nginx
 
 # execute costume command from container
 kubectl exec -it pod-name -- sh
+
+# filter with Labels
+kubectl get pods -l "tier=backend,status!=unstable"
 ```
 ### Declarative run Pods
 example:
@@ -130,12 +133,32 @@ kubectl rollout status deployment nginx-deployment
 # undo rollout
 kubectl rollout undo deployment nginx-deployment
 
+# restart rollout
+kubectl restart undo deployment nginx-deployment
+
 # annotate the deployment
 kubectl annotate deployment nginx-deployment "kubernetes.io/change-cause": "Update nginx to tag 1.27.0"
 
 # imperative Scale Deployment
 kubectl scale deploy nginx-deployment --replicas=5
 ```
+## name spaces
+In Kubernetes, namespaces provide a mechanism for isolating groups of resources within a single cluster. Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
+
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: dev
+```
+
+- for get resources in a specific name space ,use `-n dev` or `--all-namespaces`
+If we wont every time assert this can do:
+`kubectl config set-context --current --namespace=dev`
+to check current namespace:
+`kubectl config view`
+
+- Pods Between two different namespace can communicate with the Fully Qualified Domain Name (FQDN) : `<service-name>.<namespace>.svc.cluster.local`
 
 ## services(svc)
 with define svc, if pod ip changed(recreated) we can reach the pod, or also connect with the pod's name.  
@@ -155,13 +178,14 @@ spec:
     metadata:
       labels:
 ```      
+> Labels are not unique, and multiple resources can have same label like `app: api-backend`.
 
 example:ClusterIP
 ```yaml
 apiVersion: v1
 kind: Service
 metadata:
-  name: api-clusterip
+  name: api-clusterIp
   labels:
     app: api-backend
 spec:
@@ -198,6 +222,17 @@ spec:
 | LoadBalancer |- Exposes the service externally using a **cloud** provider's load balancer.<br>- Provides a single external IP to reach the service. |- Ideal for production environments where external access with load balancing is required. |
 | ExternalName |- Maps the service to an external DNS name, **redirecting traffic** to a service outside the cluster. |- Used to allow services within the cluster to access external services via a DNS name. |
 
+## Startup, Liveness, and Readiness Probes
+
+|Probe Type| Core Question| Action on Failure| Ideal Use Case|
+|----------|--------------|------------------| --------------|
+|**startupProbe**| Is the application done initializing?| Kills and restarts the container.|Slow-starting legacy apps, heavy migrations, or cache warming.|
+|**readinessProbe**|	Can this container accept user traffic right now?|	Removes Pod from Service endpoints (no traffic).|	Temporary downtime (e.g., loaded buffers, database reconnects).|
+|**livenessProbe**|	Is the container stuck, deadlocked, or broken?|	Kills and restarts the container.|	Catching deadlocks, fatal crashes, or infinite loops.|
+
+
 ## Pods Fail Status
 
 - **ImagePullBackOff**: Image is not accessible.
+
+##
