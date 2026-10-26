@@ -37,6 +37,12 @@ kubectl exec -it pod-name -- sh
 
 # filter with Labels
 kubectl get pods -l "tier=backend,status!=unstable"
+
+# Show apiVersion of Resources
+kubectl api-resources
+
+# Delete all resources
+kubectl delete all --all
 ```
 ### Declarative run Pods
 example:
