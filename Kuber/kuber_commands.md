@@ -32,7 +32,7 @@ kubectl logs nginx
 kubectl delete pod nginx
 kubectl delete --force pod nginx
 
-# execute costume command from container
+# execute costume command from container (-- command )
 kubectl exec -it pod-name -- sh
 
 # filter with Labels
@@ -157,6 +157,17 @@ kubectl annotate deployment nginx-deployment "kubernetes.io/change-cause": "Upda
 # imperative Scale Deployment
 kubectl scale deploy nginx-deployment --replicas=5
 ```
+
+## StatefulSet
+A StatefulSet is like a Deployment, but for apps that need identity and persistent storage like databases.
+Its specific features are:  
+1. Stable, predictable pod names
+2. Stable network identity (DNS per pod)
+3. Own storage per pod
+4. If ones pod is rescheduled or restarted, it is re-attached to the same PVC
+5. Ordered creation, scaling and deletion
+
+
 ## name spaces
 In Kubernetes, namespaces provide a mechanism for isolating groups of resources within a single cluster. Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
 
