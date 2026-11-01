@@ -52,7 +52,7 @@ git remote add <name> <url>                        # Add remote
 git remote remove <name>                           # Remove remote
 git remote rename <old> <new>                      # Rename remote
 git remote show <name>                             # Show remote info
-git fetch                                          # Fetch all remotes
+git fetch                                          # Fetch remotes updates (without merging)
 git pull                                           # Fetch + merge
 git pull --rebase                                  # Fetch + rebase
 git push                                           # Push to remote
@@ -130,4 +130,10 @@ git tag -a <name> -m "message"                    # Create annotated tag
 git tag -d <name>                                  # Delete tag
 git push --tags                                    # Push all tags
 git show <tag>                                     # Show tag details
+```
+
+## pull only specific file from remote (overwrites)
+```bash
+git fetch origin
+git checkout origin/<branch-name> -- <file-path>
 ```
