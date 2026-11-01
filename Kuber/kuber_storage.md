@@ -116,3 +116,75 @@ What happens after you delete a PVC depends on the PV's reclaim policy.
 ## Config map
 
 ## Secrets
+
+## NFS storage setup for Kubernetes
+NFS lets many pods on different nodes share the same storage.
+
+Step 1: Set up the NFS server
+```bash
+sudo apt update
+sudo apt install -y nfs-kernel-server
+
+# folder to share
+sudo mkdir -p /srv/nfs/share
+sudo chown nobody:nogroup /srv/nfs/share
+sudo chmod 777 /srv/nfs/share
+```
+
+Edit /etc/exports and add:
+```
+/srv/nfs/share  192.168.1.0/24(rw,sync,no_subtree_check,no_root_squash)
+```
+- `192.168.1.0/24`: only this network can mount it. Use your cluster’s node network, not *.
+- `rw`: read and write.
+- `sync`: writes go to disk before replying (safer).
+- `no_root_squash`: root in the container stays root on the share. Many apps need this, but it is less secure.
+
+Apply it:
+```bash
+sudo exportfs -rav
+sudo systemctl restart nfs-kernel-server
+```
+> Make sure port 2049 is open in the firewall.
+
+Step 2: Install the NFS client on every Kubernetes node
+```bash
+sudo apt install -y nfs-common
+```
+
+Test from a node:
+```bash
+sudo mount -t nfs 192.168.1.10:/srv/nfs/share /mnt
+ls /mnt
+sudo umount /mnt
+```
+
+**Dynamic provisioning (recommended)**
+
+You only create a PVC, and a PV plus a subfolder on the NFS share are created automatically. Use the nfs-subdir-external-provisioner:
+
+```bash
+helm repo add nfs-subdir-external-provisioner \
+  https://kubernetes-sigs.github.io/nfs-subdir-external-provisioner/
+
+helm install nfs-provisioner \
+  nfs-subdir-external-provisioner/nfs-subdir-external-provisioner \
+  --set nfs.server=192.168.1.10 \
+  --set nfs.path=/srv/nfs/share \
+  --set storageClass.name=nfs-client
+```
+
+Now any PVC can request storage with storageClassName `nfs-client`:
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-dynamic-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs-client
+  resources:
+    requests:
+      storage: 1Gi
+```
