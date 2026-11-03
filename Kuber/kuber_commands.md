@@ -273,6 +273,16 @@ spec:
 | LoadBalancer |- Exposes the service externally using a **cloud** provider's load balancer.<br>- Provides a single external IP to reach the service. |- Ideal for production environments where external access with load balancing is required. |
 | ExternalName |- Maps the service to an external DNS name, **redirecting traffic** to a service outside the cluster. |- Used to allow services within the cluster to access external services via a DNS name. |
 
+### HeadLess Service
+A headless Service is a Service with `clusterIP: None`, so it has no virtual IP and no load balancing. Instead, DNS returns the real IPs of the pods directly.
+
+Feature             |	Normal Service	| Headless Service
+--------------------|-----------------|------------------
+`clusterIP`         | A virtual IP is assigned<br>(not mention in config)	|None
+DNS lookup returns	|The single Service IP	|The IPs of all matching pods
+Load balancing	    |Yes (kube-proxy)	|No, the client chooses
+Per-pod DNS name	  |No	|Yes (with StatefulSet)
+
 ## Startup, Liveness, and Readiness Probes
 
 |Probe Type| Core Question| Action on Failure| Ideal Use Case|
