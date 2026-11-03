@@ -26,7 +26,7 @@ A PersistentVolumeClaim (PVC) is a request for storage by a user. It is similar 
 
 Kubernetes binds a PVC only to a PV with the same class name (and enough capacity, and a compatible access mode)
 
-relation between pvc an pv is one-to-one. means if a pv bound to one pvc, it connot to bound to other.
+relation between pvc an pv is one-to-one. means if a pv bound to one pvc, it cannot to bound to other.
 
 ```yaml
 apiVersion: v1
@@ -92,9 +92,13 @@ spec:
         claimName: local-volume-claim
 ```
 
+Get ready-to-use default `storageClass` for dynamic provisioning:  
+`kubectl get storageclass`
+
+
 ### access modes
 **ReadWriteOnce**
-    the volume can be mounted as read-write by a single node, and can be used by any number of pods whithin that node.
+    the volume can be mounted as read-write by a single node, and can be used by any number of pods within that node.
 **ReadOnlyMany**
     the volume can be mounted as read-only by many nodes.
 **ReadWriteMany**

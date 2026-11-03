@@ -2,7 +2,7 @@
 
 Minikube is a lightweight Kubernetes implementation that creates a VM on your local machine and deploys a simple cluster containing only one node.
 
-### Instalation
+### Installation
 
 first install container runtime(Docker).
 
@@ -20,4 +20,7 @@ minikube stop
 
 # start cluster
 minikube start
+
+# Connect to node
+minikube ssh
 ```

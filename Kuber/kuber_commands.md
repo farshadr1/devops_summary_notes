@@ -3,6 +3,7 @@
 
 https://k8s-examples.container-solutions.com/examples/Pod/Pod.html
 https://k8syaml.com/
+https://github.com/lm-academy/kubernetes-course
 
 
 ## imperative commands for Pods
@@ -167,6 +168,30 @@ Its specific features are:
 4. If ones pod is rescheduled or restarted, it is re-attached to the same PVC
 5. Ordered creation, scaling and deletion
 
+> for apply StatefulSet we need PersistentVolume config for each replica and dont need define PersistentVolumeClaim.
+
+StatefulSet example:
+```yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: demo-ss
+spec:
+  serviceName: busybox  # new relative to Deployment
+  replicas: ...
+  selector: ...
+  template: ...
+  volumeClaimTemplates:   # new relative to Deployment
+    - metadata:
+        name: local-volume
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        storageClassName: standard
+        resources:
+          requests:
+            storage: 128Mi
+```
 
 ## name spaces
 In Kubernetes, namespaces provide a mechanism for isolating groups of resources within a single cluster. Namespaces cannot be nested inside one another and each Kubernetes resource can only be in one namespace.
