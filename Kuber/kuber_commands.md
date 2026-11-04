@@ -168,7 +168,7 @@ Its specific features are:
 4. If ones pod is rescheduled or restarted, it is re-attached to the same PVC
 5. Ordered creation, scaling and deletion
 
-> for apply StatefulSet we need PersistentVolume config for each replica and dont need define PersistentVolumeClaim.
+> for static provisioning StatefulSet we need PersistentVolume config for each replica and don't need define PersistentVolumeClaim.
 
 StatefulSet example:
 ```yaml
@@ -187,7 +187,7 @@ spec:
       spec:
         accessModes:
           - ReadWriteOnce
-        storageClassName: standard
+        storageClassName: standard  # minikube dynamic provisioning
         resources:
           requests:
             storage: 128Mi
@@ -274,14 +274,14 @@ spec:
 | ExternalName |- Maps the service to an external DNS name, **redirecting traffic** to a service outside the cluster. |- Used to allow services within the cluster to access external services via a DNS name. |
 
 ### HeadLess Service
-A headless Service is a Service with `clusterIP: None`, so it has no virtual IP and no load balancing. Instead, DNS returns the real IPs of the pods directly.
+A headless Service is a Service with `clusterIP: None`, so it has no virtual IP and no load balancing. Instead, DNS returns the real IPs of the pods directly. it is used with StatefulSets.
 
 Feature             |	Normal Service	| Headless Service
 --------------------|-----------------|------------------
 `clusterIP`         | A virtual IP is assigned<br>(not mention in config)	|None
 DNS lookup returns	|The single Service IP	|The IPs of all matching pods
-Load balancing	    |Yes (kube-proxy)	|No, the client chooses
-Per-pod DNS name	  |No	|Yes (with StatefulSet)
+Load balancing	    |Yes (kube-proxy)	      |No, the client chooses
+Per-pod DNS name	  |No	                    |Yes (with StatefulSet)
 
 ## Startup, Liveness, and Readiness Probes
 
