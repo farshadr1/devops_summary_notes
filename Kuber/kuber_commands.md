@@ -169,6 +169,7 @@ Its specific features are:
 5. Ordered creation, scaling and deletion
 
 > for static provisioning StatefulSet we need PersistentVolume config for each replica and don't need define PersistentVolumeClaim.
+> for dynamic provisioning StatefulSet we don't need pv and pvc config, only using Standard `storageClassName` in `volumeClaimTemplates`.
 
 StatefulSet example:
 ```yaml
@@ -177,11 +178,11 @@ kind: StatefulSet
 metadata:
   name: demo-ss
 spec:
-  serviceName: busybox  # new relative to Deployment
+  serviceName: busybox  # svc name, new relative to Deployment
   replicas: ...
   selector: ...
   template: ...
-  volumeClaimTemplates:   # new relative to Deployment
+  volumeClaimTemplates:   # pvc, new relative to Deployment
     - metadata:
         name: local-volume
       spec:
@@ -349,4 +350,39 @@ Fault Message | issue
 **OOMKilled**: | Out Of Memory, Image Killed because resources Limit
 **CrashLoopBackOff** : | multiple Crashed and currently waiting to restart again
 
-##
+## Secrets
+using secret in pods is like using config map.
+The simplest way to create a Secret is with the kubectl create secret command:
+```bash
+kubectl create secret generic db-credentials \
+--from-literal=username=admin \
+--from-literal=password=super-secret-password
+```
+this command creates a Secret named db-credentials with two values: username and password. Kubernetes will automatically base64-encode these values not encrypt.
+
+For Docker registry credentials:
+```bash
+kubectl create secret docker-registry regcred \
+--docker-server=myregistry.azurecr.io \
+--docker-username=myuser \
+--docker-password=mypassword \
+--docker-email=user@example.com
+```
+
+To store files such as TLS certificates or SSH keys, you can create a Secret directly from those files:
+```bash
+kubectl create secret generic tls-certs \
+--from-file=tls.crt=./server.crt \
+--from-file=tls.key=./server.key
+```
+
+when manifest secrets with yaml file, the data is base64 format. to convert our data use this:
+```bash
+# Show base64 format of a string -> cm9vdC11c2Vy
+echo -n "root-user" | base64
+```
+for example 
+```yaml
+data:
+  user: cm9vdC11c2Vy  # root-user
+```
