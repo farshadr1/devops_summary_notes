@@ -118,3 +118,66 @@ Here are some of the most common service types:
   -*Gateway API* acts as an API gateway and provides advanced, flexible and extensible traffic routing and policy management beyond traditional Ingress resources.
 
 By comparison, the Ingress resource allows multiple services to be accessed through a single external IP address by using smart routing rules, based on domain names or paths. It centralizes HTTP(S) handling and traffic control, making it a strong choice for production workloads.
+
+## how config Network Policy
+
+Deny all trafic in default namespace:
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all
+spec:
+  podSelector: {}   # all pods
+  policyTypes:      # becuase non config added this mean not allow any connection
+    - Ingress
+    - Egress
+```
+ 
+ allow example:
+ ```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-curl
+spec:
+  podSelector:
+    matchLabels:
+      app: color-api
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: dev
+          podSelector:        # it belongs to the same peer as namespaceSelector
+            matchLabels:
+              app: traffic-generator
+        - podSelector:
+            matchLabels:
+              app: curl
+ ```
+
+when we config egress, we should consider k8s Dns.
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-dns
+spec:
+  podSelector: {}
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+```
+
+> Network Policies are namespaced resources.
